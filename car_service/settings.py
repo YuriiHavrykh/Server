@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'car_service',
     'rest_framework',
     'car_service.api',
-    'frontend',
+    'web',
 ]
 
 MIDDLEWARE = [
