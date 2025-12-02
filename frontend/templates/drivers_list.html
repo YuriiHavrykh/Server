@@ -1,0 +1,24 @@
+<h1>Drivers</h1>
+
+<table>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Nationality</th>
+        <th>Action</th>
+    </tr>
+    {% for driver in drivers %}
+        <tr>
+            <td>{{ driver.first_name }}</td>
+            <td>{{ driver.last_name }}</td>
+            <td>{{ driver.nationality }}</td>
+            <td>
+                <form method="post" action="{% url 'drivers_list' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete_driver_id" value="{{ driver.driver_id }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,10 @@
+<h1>{{ employee.firstName }} {{ employee.lastName }}</h1>
+
+<p>Phone: {{ employee.phoneNumber }}</p>
+<p>Email: {{ employee.email }}</p>
+<p>Position: {{ employee.idPosition.positionName }}</p>
+<p>Service Center: {{ employee.idServiceCenter.name }}</p>
+
+<a href="{% url 'employee_update' employee.pk %}">Edit</a> |
+<a href="{% url 'employee_delete' employee.pk %}">Delete</a> |
+<a href="{% url 'employee_list' %}">Back</a>

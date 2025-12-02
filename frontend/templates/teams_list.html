@@ -1,0 +1,22 @@
+<h1>Teams</h1>
+
+<table>
+    <tr>
+        <th>Team Name</th>
+        <th>Base Country</th>
+        <th>Action</th>
+    </tr>
+    {% for team in teams %}
+        <tr>
+            <td>{{ team.team_name }}</td>
+            <td>{{ team.base_country }}</td>
+            <td>
+                <form method="post" action="{% url 'teams_list' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete_team_id" value="{{ team.team_id }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>

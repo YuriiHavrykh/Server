@@ -1,0 +1,10 @@
+<h1>Delete Employee</h1>
+
+<p>Are you sure you want to delete {{ employee.firstName }} {{ employee.lastName }}?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, delete</button>
+</form>
+
+<a href="{% url 'employee_detail' employee.pk %}">Cancel</a>
