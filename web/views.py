@@ -104,20 +104,17 @@ def get_service_centers():
 def get_all_plots_context(framework, request_params={}):
     context = {}
 
-    # 1. ОТРИМУЄМО ОБИДВА ПАРАМЕТРИ
     center_id = request_params.get('center_id')
-    min_repairs = request_params.get('min_repairs')  # <--- ДОДАНО: Зчитуємо min_repairs
+    min_repairs = request_params.get('min_repairs')
 
     for i in range(1, 7):
         endpoint = API_ENDPOINTS[i]
         params = {}
         title_suffix = ""
 
-        # ЛОГІКА ФІЛЬТРАЦІЇ ГРАФІКА 1
         if i == 1 and min_repairs:
             params['min_repairs'] = min_repairs
 
-        # ЛОГІКА ФІЛЬТРАЦІЇ ГРАФІКА 4
         if i == 4 and center_id:
             params['center_id'] = center_id
             try:
@@ -133,7 +130,6 @@ def get_all_plots_context(framework, request_params={}):
     context['service_centers'] = get_service_centers()
     context['selected_center_id'] = int(center_id) if center_id else None
 
-    # ДОДАНО: Передача поточного значення min_repairs назад у шаблон
     context['min_repairs'] = int(min_repairs) if min_repairs and min_repairs.isdigit() else 100000
 
     return context
