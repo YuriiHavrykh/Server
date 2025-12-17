@@ -113,7 +113,7 @@ class RepairDetailRepository(BaseRepository):
             .order_by('-total_income')
         )
 
-    def part_income_with_having(self):
+    def part_income(self):
         return (
             self.model.objects
             .filter(idPart__isnull=False)

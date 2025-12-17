@@ -206,8 +206,8 @@ class RepairDetailViewSet(BaseViewSet):
         return Response({"data": df.to_dict(orient='records'), "stats": stats})
 
     @action(detail=False, methods=['get'], url_path='analytics/part-income-having')
-    def part_income_having_df(self, request):
-        qs = self.repo.part_income_with_having()
+    def part_income_df(self, request):
+        qs = self.repo.part_income()
         df = pd.DataFrame(list(qs))
         if df.empty: return Response({"data": [], "stats": {}}, status=status.HTTP_204_NO_CONTENT)
         df.columns = ['PartName', 'TotalIncome']
