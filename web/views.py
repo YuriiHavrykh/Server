@@ -1,5 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from car_service.models import Employee
+from car_service.models import Employee, ServiceCenter
+from web.dashboard_utils import fetch_data, get_plot_html
+from bokeh.resources import CDN
+from bokeh.embed import server_document
 from .forms import EmployeeForm
 
 from car_service.NetworkHelper import NetworkHelper
@@ -82,3 +85,67 @@ def employee_delete(request, pk):
         return redirect('employee_list')
 
     return render(request, 'employee/delete.html', {'employee': employee})
+
+
+API_ENDPOINTS = {
+    1: 'repairs/analytics/repairs-by-center',
+    2: 'repairs/analytics/avg-parts-per-center',
+    3: 'repairs/analytics/repairs-by-month',
+    4: 'repairs/analytics/top-clients',  # Тут буде фільтр center_id
+    5: 'repair-details/analytics/service-income',
+    6: 'repair-details/analytics/part-income-having',
+}
+
+
+def get_service_centers():
+    return ServiceCenter.objects.all()
+
+
+def get_all_plots_context(framework, request_params={}):
+    context = {}
+
+    # 1. ОТРИМУЄМО ОБИДВА ПАРАМЕТРИ
+    center_id = request_params.get('center_id')
+    min_repairs = request_params.get('min_repairs')  # <--- ДОДАНО: Зчитуємо min_repairs
+
+    for i in range(1, 7):
+        endpoint = API_ENDPOINTS[i]
+        params = {}
+        title_suffix = ""
+
+        # ЛОГІКА ФІЛЬТРАЦІЇ ГРАФІКА 1
+        if i == 1 and min_repairs:
+            params['min_repairs'] = min_repairs
+
+        # ЛОГІКА ФІЛЬТРАЦІЇ ГРАФІКА 4
+        if i == 4 and center_id:
+            params['center_id'] = center_id
+            try:
+                center = ServiceCenter.objects.get(idServiceCenter=center_id)
+                title_suffix = f" (Центр: {center.name})"
+            except ServiceCenter.DoesNotExist:
+                pass
+
+        df = fetch_data(endpoint, params=params)
+        plot_html = get_plot_html(i, framework, df, title_suffix=title_suffix)
+        context[f'plot_{i}'] = plot_html
+
+    context['service_centers'] = get_service_centers()
+    context['selected_center_id'] = int(center_id) if center_id else None
+
+    # ДОДАНО: Передача поточного значення min_repairs назад у шаблон
+    context['min_repairs'] = int(min_repairs) if min_repairs and min_repairs.isdigit() else 100000
+
+    return context
+
+
+def dashboard_v1_plotly(request):
+    context = get_all_plots_context('plotly', request_params=request.GET)
+    return render(request, 'web/dashboards/dashboard.html', context)
+
+
+def dashboard_v2_bokeh(request):
+    context = get_all_plots_context('bokeh', request_params=request.GET)
+    context['bokeh_resources'] = CDN.render()
+    context['title'] = "Dashboard (Bokeh)"
+    return render(request, 'web/dashboards/dashboard.html', context)

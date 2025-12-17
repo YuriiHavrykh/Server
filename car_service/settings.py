@@ -79,10 +79,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'car_service_network',
-        'USER': 'root',  # або твій користувач MySQL
+        'USER': 'root',
         'PASSWORD': '1111',
-        'HOST': 'localhost',  # або IP сервера
-        'PORT': '3306',  # стандартний порт
+        'HOST': 'localhost',
+        'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8mb4',
         },

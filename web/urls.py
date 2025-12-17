@@ -1,3 +1,5 @@
+# web/urls.py (Ваш поточний вміст)
+
 from django.urls import path
 from . import views
 
@@ -8,5 +10,7 @@ urlpatterns = [
     path('employee/<int:pk>/edit/', views.employee_update, name='employee_update'),
     path('employee/<int:pk>/delete/', views.employee_delete, name='employee_delete'),
     path('teams/', views.teams_list, name='teams_list'),
-    path('drivers/', views.drivers_list, name='drivers_list')
+    path('drivers/', views.drivers_list, name='drivers_list'),
+    path('v1/', views.dashboard_v1_plotly, name='dashboard_v1'),
+    path('v2/', views.dashboard_v2_bokeh, name='dashboard_v2'),
 ]

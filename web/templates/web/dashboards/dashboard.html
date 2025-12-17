@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% if 'v2' in request.path %}
+        {{ bokeh_resources|safe }}
+    {% endif %}
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #controls {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .control-group {
+            margin-bottom: 10px;
+        }
+
+        /* Новий клас для групування */
+        .chart {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>{{ title }}</h1>
+
+    <div id="controls">
+
+        <div class="control-group">
+            <h3>Фільтрація Графіка 1 (Кількість ремонтів по Центрах)</h3>
+            <label for="min_repairs_slider">Мін. Кількість Ремонтів:</label>
+            <input type="range" id="min_repairs_slider" min="0" max="2000" step="100" value="{{ min_repairs }}"
+                   oninput="document.getElementById('min_repairs_value').textContent = this.value">
+            <span id="min_repairs_value">{{ min_repairs }}</span>
+        </div>
+
+        <div class="control-group">
+            <h3>Фільтрація Графіка 4 (Топ Клієнтів)</h3>
+            <label for="center_select">Виберіть Сервісний Центр:</label>
+            <select id="center_select">
+                <option value="" {% if not selected_center_id %}selected{% endif %}>Всі Центри</option>
+                {% for center in service_centers %}
+                    <option value="{{ center.idServiceCenter }}"
+                            {% if center.idServiceCenter == selected_center_id %}selected{% endif %}>
+                        {{ center.name }} (ID: {{ center.idServiceCenter }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button onclick="applyFilters()">Застосувати Фільтр</button>
+    </div>
+
+    <div class="chart-grid">
+        <div class="chart">{{ plot_1|safe }}</div>
+        <div class="chart">{{ plot_2|safe }}</div>
+        <div class="chart">{{ plot_3|safe }}</div>
+        <div class="chart">{{ plot_4|safe }}</div>
+        <div class="chart">{{ plot_5|safe }}</div>
+        <div class="chart">{{ plot_6|safe }}</div>
+    </div>
+</div>
+
+<script>
+    function applyFilters() {
+        const minRepairs = document.getElementById('min_repairs_slider').value;
+        const centerId = document.getElementById('center_select').value;
+
+        const currentUrl = window.location.pathname;
+        const params = [];
+
+        if (minRepairs) {
+            params.push(`min_repairs=${minRepairs}`);
+        }
+        if (centerId) {
+            params.push(`center_id=${centerId}`);
+        }
+
+        let newUrl = currentUrl;
+        if (params.length > 0) {
+            newUrl += '?' + params.join('&');
+        }
+
+        window.location.href = newUrl;
+    }
+</script>
+
+</body>
+</html>
